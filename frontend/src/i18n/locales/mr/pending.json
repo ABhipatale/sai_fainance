@@ -1,0 +1,37 @@
+{
+  "subtitle": "हप्ते बाकी असलेले ग्राहक",
+  "pendingTotal": "एकूण प्रलंबित",
+  "overdueTotal": "एकूण थकीत",
+  "filters": {
+    "all": "सर्व सक्रिय",
+    "pending": "प्रलंबित",
+    "overdue": "थकीत",
+    "partial": "अंशतः भरलेले",
+    "advance": "आगाऊ",
+    "today": "आजचे देय"
+  },
+  "sort": "क्रम",
+  "sortBy": {
+    "remaining_installments": "शिल्लक हप्ते",
+    "overdue_amount": "थकीत रक्कम",
+    "pending_amount": "प्रलंबित रक्कम",
+    "next_due_date": "पुढील देय तारीख",
+    "name": "नाव",
+    "village": "गाव"
+  },
+  "asc": "कमी → जास्त",
+  "desc": "जास्त → कमी",
+  "recoveryStaff": "वसुली कर्मचारी",
+  "remainingInst": "शिल्लक हप्ते",
+  "left": "बाकी",
+  "totalLoan": "एकूण कर्ज",
+  "totalPaid": "एकूण भरलेले",
+  "remainingLoan": "शिल्लक कर्ज",
+  "nextDue": "पुढील देय",
+  "pendingAmount": "प्रलंबित रक्कम",
+  "overdueAmount": "थकीत रक्कम",
+  "advanceBalance": "आगाऊ शिल्लक",
+  "remainingInstallments": "शिल्लक हप्ते",
+  "empty": "प्रलंबित ग्राहक नाहीत",
+  "emptyText": "निवडलेल्या फिल्टरसाठी सर्व वसुली पूर्ण आहे."
+}

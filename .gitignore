@@ -1,0 +1,60 @@
+# secrets / environment
+.env
+.env.*
+!.env.example
+!.env.production.example
+backend/.env
+backend/auth.json
+
+# dependencies
+node_modules/
+backend/vendor/
+frontend/node_modules/
+
+# build output (frontend builds into backend/public)
+frontend/dist/
+backend/public/app.html
+backend/public/assets/
+backend/public/sw.js
+backend/public/workbox-*.js
+backend/public/registerSW.js
+backend/public/manifest.webmanifest
+backend/public/icons/
+backend/public/favicon.svg
+backend/public/favicon.ico
+backend/public/icons.svg
+backend/public/build/
+backend/public/hot
+backend/public/storage
+
+# runtime data (customer photos, documents, logs, caches)
+backend/storage/app/private/*
+backend/storage/app/public/*
+backend/storage/logs/*
+backend/storage/framework/cache/*
+backend/storage/framework/sessions/*
+backend/storage/framework/views/*
+backend/storage/*.key
+!backend/storage/**/.gitignore
+
+# local databases / dumps / backups
+*.sqlite
+*.sqlite3
+*.sql
+*.sql.gz
+
+# release packages
+release/
+*.zip
+
+# tests / caches
+.phpunit.result.cache
+backend/.phpunit.cache/
+*.log
+
+# editors / OS / tools
+.idea/
+.vscode/
+.claude/
+.DS_Store
+Thumbs.db

@@ -1,0 +1,65 @@
+{
+  "greeting": "नमस्ते, {{name}}",
+  "tabs": {
+    "monday": "सोमवार",
+    "collection": "वसूली दिवस",
+    "after": "वसूली के बाद"
+  },
+  "cards": {
+    "active_khata": "सक्रिय खाते",
+    "active_loan_amount": "सक्रिय ऋण राशि",
+    "total_to_collect": "कुल वसूलने योग्य",
+    "total_collected": "कुल वसूल",
+    "total_pending": "कुल लंबित",
+    "total_overdue": "कुल बकाया",
+    "advance_balance": "अग्रिम शेष",
+    "today_collection": "आज की वसूली",
+    "monday_opening_balance": "सोमवार प्रारंभिक शेष",
+    "new_disbursement": "नया ऋण वितरण (सप्ताह)",
+    "today_penalty_collection": "आज की जुर्माना वसूली"
+  },
+  "customersShort": "ग्राहक",
+  "target": "लक्ष्य",
+  "collectedShort": "वसूल",
+  "remainingShort": "शेष",
+  "weekCollected": "इस सप्ताह",
+  "cashInHand": "हाथ में नकद",
+  "monday": {
+    "previousClosing": "पिछला समापन शेष",
+    "availableCash": "उपलब्ध नकद",
+    "weeklyExpected": "साप्ताहिक अपेक्षित वसूली",
+    "nextCollection": "अगली वसूली",
+    "totalPending": "कुल लंबित",
+    "cashByLocation": "स्थान के अनुसार नकद",
+    "staffTargets": "वसूली कर्मचारी लक्ष्य"
+  },
+  "opening": {
+    "title": "सोमवार प्रारंभिक शेष",
+    "help": "प्रारंभिक शेष पिछले समापन शेष से अपने-आप आता है। कोई भी मैन्युअल बदलाव कारण सहित अलग दर्ज होता है।",
+    "confirm": "प्रारंभिक शेष की पुष्टि करें",
+    "confirmText": "सूचीबद्ध स्थानों का प्रारंभिक शेष पक्का करें? पुष्टि के बाद बदला नहीं जा सकता।",
+    "confirmed": "पुष्टि हो गई",
+    "done": "प्रारंभिक शेष की पुष्टि हुई",
+    "allDone": "सभी स्थान पहले ही पुष्ट हैं",
+    "previous": "पिछला समापन शेष",
+    "adjustment": "समायोजन (+/−)",
+    "noteRequired": "हर समायोजन का कारण लिखें"
+  },
+  "collection": {
+    "collectedToday": "आज वसूल",
+    "expectedToday": "आज की अपेक्षित",
+    "remaining": "शेष",
+    "customersPaid": "भुगतान करने वाले ग्राहक",
+    "customersPending": "लंबित ग्राहक",
+    "missed": "छूटी हुई किस्तें",
+    "staffPerformance": "वसूली कर्मचारी प्रदर्शन"
+  },
+  "after": {
+    "newDisbursements": "नया ऋण वितरण",
+    "pendingInstallments": "लंबित किस्तें",
+    "overdueRecovery": "बकाया वसूली",
+    "advanceCustomers": "अग्रिम वाले ग्राहक",
+    "oldKhata": "पुराना खाता बकाया",
+    "totalRemaining": "कुल शेष वसूली"
+  }
+}

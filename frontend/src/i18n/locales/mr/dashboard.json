@@ -1,0 +1,65 @@
+{
+  "greeting": "नमस्कार, {{name}}",
+  "tabs": {
+    "monday": "सोमवार",
+    "collection": "वसुली दिवस",
+    "after": "वसुलीनंतर"
+  },
+  "cards": {
+    "active_khata": "सक्रिय खाती",
+    "active_loan_amount": "सक्रिय कर्ज रक्कम",
+    "total_to_collect": "एकूण वसूल करायचे",
+    "total_collected": "एकूण वसूल",
+    "total_pending": "एकूण प्रलंबित",
+    "total_overdue": "एकूण थकीत",
+    "advance_balance": "आगाऊ शिल्लक",
+    "today_collection": "आजची वसुली",
+    "monday_opening_balance": "सोमवार सुरुवातीची शिल्लक",
+    "new_disbursement": "नवीन कर्ज वितरण (आठवडा)",
+    "today_penalty_collection": "आजची दंड वसुली"
+  },
+  "customersShort": "ग्राहक",
+  "target": "लक्ष्य",
+  "collectedShort": "वसूल",
+  "remainingShort": "शिल्लक",
+  "weekCollected": "या आठवड्यात",
+  "cashInHand": "हातातील रोख",
+  "monday": {
+    "previousClosing": "मागील अखेरची शिल्लक",
+    "availableCash": "उपलब्ध रोख",
+    "weeklyExpected": "साप्ताहिक अपेक्षित वसुली",
+    "nextCollection": "पुढील वसुली",
+    "totalPending": "एकूण प्रलंबित",
+    "cashByLocation": "ठिकाणानुसार रोख",
+    "staffTargets": "वसुली कर्मचारी लक्ष्य"
+  },
+  "opening": {
+    "title": "सोमवार सुरुवातीची शिल्लक",
+    "help": "सुरुवातीची शिल्लक मागील अखेरच्या शिल्लकेवरून आपोआप येते. कोणताही मॅन्युअल बदल कारणासह वेगळा नोंदवला जातो.",
+    "confirm": "सुरुवातीची शिल्लक निश्चित करा",
+    "confirmText": "दिलेल्या ठिकाणांची सुरुवातीची शिल्लक निश्चित करायची? निश्चित केल्यावर बदल करता येत नाही.",
+    "confirmed": "निश्चित",
+    "done": "सुरुवातीची शिल्लक निश्चित झाली",
+    "allDone": "सर्व ठिकाणे आधीच निश्चित आहेत",
+    "previous": "मागील अखेरची शिल्लक",
+    "adjustment": "समायोजन (+/−)",
+    "noteRequired": "प्रत्येक समायोजनाचे कारण लिहा"
+  },
+  "collection": {
+    "collectedToday": "आज वसूल",
+    "expectedToday": "आजची अपेक्षित",
+    "remaining": "शिल्लक",
+    "customersPaid": "पैसे भरलेले ग्राहक",
+    "customersPending": "प्रलंबित ग्राहक",
+    "missed": "चुकलेले हप्ते",
+    "staffPerformance": "वसुली कर्मचारी कामगिरी"
+  },
+  "after": {
+    "newDisbursements": "नवीन कर्ज वितरण",
+    "pendingInstallments": "प्रलंबित हप्ते",
+    "overdueRecovery": "थकीत वसुली",
+    "advanceCustomers": "आगाऊ ग्राहक",
+    "oldKhata": "जुने खाते थकबाकी",
+    "totalRemaining": "एकूण शिल्लक वसुली"
+  }
+}

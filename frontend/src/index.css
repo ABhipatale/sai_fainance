@@ -1,0 +1,57 @@
+@import "tailwindcss";
+
+/* Sai Finance design tokens – navy primary; green = collected, orange = pending, red = overdue, purple = advance */
+@theme {
+  --font-sans: "Inter", "Noto Sans Devanagari", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --color-navy-50: #eef3fb;
+  --color-navy-100: #d9e4f5;
+  --color-navy-200: #b3c9ea;
+  --color-navy-500: #2a5bb0;
+  --color-navy-600: #1c458f;
+  --color-navy-700: #14357226;
+  --color-navy-800: #0f2a5c;
+  --color-navy-900: #0a1d42;
+  --color-ok: #15a05a;
+  --color-pend: #f08a1c;
+  --color-over: #dc3545;
+  --color-adv: #7c4dff;
+  --shadow-card: 0 1px 2px rgba(15, 42, 92, 0.05), 0 4px 14px rgba(15, 42, 92, 0.06);
+}
+
+:root {
+  color-scheme: light;
+  --safe-bottom: env(safe-area-inset-bottom, 0px);
+}
+
+html, body, #root { height: 100%; }
+body {
+  margin: 0;
+  background: #f4f6fa;
+  color: #0f1b33;
+  font-family: var(--font-sans);
+  -webkit-tap-highlight-color: transparent;
+  overscroll-behavior-y: none;
+}
+button, input, select, textarea { font: inherit; }
+input, select, textarea { font-size: 16px; } /* prevents iOS zoom on focus */
+
+.skeleton {
+  background: linear-gradient(90deg, #e8ecf3 25%, #f3f5f9 37%, #e8ecf3 63%);
+  background-size: 400% 100%;
+  animation: shimmer 1.3s ease infinite;
+  border-radius: 10px;
+}
+@keyframes shimmer { 0% { background-position: 100% 50%; } 100% { background-position: 0 50%; } }
+
+@keyframes sheet-up { from { transform: translateY(30px); opacity: 0; } to { transform: none; opacity: 1; } }
+.sheet-in { animation: sheet-up .18s ease-out; }
+
+.pb-safe { padding-bottom: calc(env(safe-area-inset-bottom, 0px) + 0.5rem); }
+
+@media print {
+  body { background: #fff; }
+  .no-print { display: none !important; }
+  .print-only { display: block !important; }
+  @page { margin: 12mm; }
+}
+.print-only { display: none; }

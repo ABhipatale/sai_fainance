@@ -1,0 +1,14 @@
+{
+  "title": "Penalties",
+  "nav": "Penalties",
+  "add": "Add penalty",
+  "edit": "Edit penalty",
+  "none": "No penalties",
+  "collect": "Collect penalty",
+  "waive": "Waive",
+  "reverse": "Reverse",
+  "installmentNo": "Installment number",
+  "manualHint": "Penalties are entered manually – nothing is calculated automatically",
+  "saved": "Penalty updated",
+  "waived": "Waived"
+}

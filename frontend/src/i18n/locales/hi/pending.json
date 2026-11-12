@@ -1,0 +1,37 @@
+{
+  "subtitle": "किस्तें बाकी वाले ग्राहक",
+  "pendingTotal": "कुल लंबित",
+  "overdueTotal": "कुल बकाया",
+  "filters": {
+    "all": "सभी सक्रिय",
+    "pending": "लंबित",
+    "overdue": "बकाया",
+    "partial": "आंशिक भुगतान",
+    "advance": "अग्रिम",
+    "today": "आज देय"
+  },
+  "sort": "क्रम",
+  "sortBy": {
+    "remaining_installments": "शेष किस्तें",
+    "overdue_amount": "बकाया राशि",
+    "pending_amount": "लंबित राशि",
+    "next_due_date": "अगली देय तारीख",
+    "name": "नाम",
+    "village": "गाँव"
+  },
+  "asc": "कम → ज़्यादा",
+  "desc": "ज़्यादा → कम",
+  "recoveryStaff": "वसूली कर्मचारी",
+  "remainingInst": "शेष किस्तें",
+  "left": "बाकी",
+  "totalLoan": "कुल ऋण",
+  "totalPaid": "कुल चुकाया",
+  "remainingLoan": "शेष ऋण",
+  "nextDue": "अगली देय",
+  "pendingAmount": "लंबित राशि",
+  "overdueAmount": "बकाया राशि",
+  "advanceBalance": "अग्रिम शेष",
+  "remainingInstallments": "शेष किस्तें",
+  "empty": "कोई लंबित ग्राहक नहीं",
+  "emptyText": "चुने गए फ़िल्टर के लिए सारी वसूली पूरी है।"
+}

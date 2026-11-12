@@ -1,0 +1,65 @@
+{
+  "greeting": "Hello, {{name}}",
+  "tabs": {
+    "monday": "Monday",
+    "collection": "Collection day",
+    "after": "After collection"
+  },
+  "cards": {
+    "active_khata": "Active khata",
+    "active_loan_amount": "Active loan amount",
+    "total_to_collect": "Total to collect",
+    "total_collected": "Total collected",
+    "total_pending": "Total pending",
+    "total_overdue": "Total overdue",
+    "advance_balance": "Advance balance",
+    "today_collection": "Today's collection",
+    "monday_opening_balance": "Monday opening balance",
+    "new_disbursement": "New loan disbursement (week)",
+    "today_penalty_collection": "Today's penalty collection"
+  },
+  "customersShort": "customers",
+  "target": "Target",
+  "collectedShort": "Collected",
+  "remainingShort": "Remaining",
+  "weekCollected": "This week",
+  "cashInHand": "Cash in hand",
+  "monday": {
+    "previousClosing": "Previous closing",
+    "availableCash": "Available cash",
+    "weeklyExpected": "Weekly expected collection",
+    "nextCollection": "Next collection",
+    "totalPending": "Total pending",
+    "cashByLocation": "Cash by location",
+    "staffTargets": "Recovery staff targets"
+  },
+  "opening": {
+    "title": "Monday opening balance",
+    "help": "Opening balance defaults to the previous closing. Any manual change is recorded separately with your reason.",
+    "confirm": "Confirm opening balance",
+    "confirmText": "Confirm the opening balance for the listed locations? Confirmed balances cannot be changed.",
+    "confirmed": "Confirmed",
+    "done": "Opening balance confirmed",
+    "allDone": "All locations are already confirmed",
+    "previous": "Previous closing balance",
+    "adjustment": "Adjustment (+/−)",
+    "noteRequired": "Enter a reason for every adjustment"
+  },
+  "collection": {
+    "collectedToday": "Collected today",
+    "expectedToday": "Expected today",
+    "remaining": "Remaining",
+    "customersPaid": "Customers paid",
+    "customersPending": "Customers pending",
+    "missed": "Missed installments",
+    "staffPerformance": "Recovery staff performance"
+  },
+  "after": {
+    "newDisbursements": "New loan disbursements",
+    "pendingInstallments": "Pending installments",
+    "overdueRecovery": "Overdue recovery",
+    "advanceCustomers": "Advance customers",
+    "oldKhata": "Old khata outstanding",
+    "totalRemaining": "Total remaining recovery"
+  }
+}

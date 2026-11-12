@@ -1,0 +1,37 @@
+{
+  "subtitle": "Customers with unpaid installments",
+  "pendingTotal": "Total pending",
+  "overdueTotal": "Total overdue",
+  "filters": {
+    "all": "All active",
+    "pending": "Pending",
+    "overdue": "Overdue",
+    "partial": "Partially paid",
+    "advance": "Advance",
+    "today": "Today's due"
+  },
+  "sort": "Sort",
+  "sortBy": {
+    "remaining_installments": "Remaining installments",
+    "overdue_amount": "Overdue amount",
+    "pending_amount": "Pending amount",
+    "next_due_date": "Next due date",
+    "name": "Name",
+    "village": "Village"
+  },
+  "asc": "Low → High",
+  "desc": "High → Low",
+  "recoveryStaff": "Recovery staff",
+  "remainingInst": "Remaining installments",
+  "left": "left",
+  "totalLoan": "Total loan",
+  "totalPaid": "Total paid",
+  "remainingLoan": "Remaining loan",
+  "nextDue": "Next due",
+  "pendingAmount": "Pending amount",
+  "overdueAmount": "Overdue amount",
+  "advanceBalance": "Advance balance",
+  "remainingInstallments": "Installments left",
+  "empty": "No pending customers",
+  "emptyText": "Everything is collected for the selected filters."
+}

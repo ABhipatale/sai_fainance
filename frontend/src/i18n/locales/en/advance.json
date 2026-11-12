@@ -1,0 +1,23 @@
+{
+  "subtitle": "Advance payments and balances",
+  "newAdvance": "New advance",
+  "totalAdvance": "Total advance held",
+  "customers": "Khatas with advance",
+  "empty": "No advance balances",
+  "emptyText": "When a customer pays more than the due amount, the extra shows here.",
+  "balance": "Advance balance",
+  "addAdvance": "Add advance",
+  "ledger": "Ledger",
+  "refund": "Refund",
+  "searchKhata": "Search khata, name or mobile",
+  "ledgerTitle": "Advance ledger",
+  "ledgerEmpty": "No advance entries",
+  "type": "Type",
+  "deposit": "Deposit",
+  "usedOrRefund": "Applied / Refund",
+  "balanceCol": "Balance",
+  "refundTitle": "Refund advance",
+  "refundAmount": "Refund amount",
+  "refundLocation": "Pay from cash location",
+  "refundDone": "Advance refunded"
+}
