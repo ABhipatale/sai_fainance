@@ -1,0 +1,32 @@
+{
+  "khataCount": "khata",
+  "active": "Active",
+  "completed": "Completed",
+  "listView": "List",
+  "gridView": "All weeks (grid)",
+  "tone": {
+    "red": "3+ weeks",
+    "orange": "2 weeks",
+    "yellow": "1 week",
+    "green": "On time"
+  },
+  "sortRemaining": "Fewest weeks left first",
+  "sortPending": "Most pending",
+  "sortName": "Name",
+  "pendingTotal": "Total pending",
+  "empty": "No khata",
+  "customer": "Customer",
+  "paidWeeks": "Paid",
+  "left": "Left",
+  "weekly": "Weekly",
+  "pending": "Pending",
+  "advance": "Advance",
+  "outstanding": "Total due",
+  "wk": "w",
+  "legend": {
+    "paid": "Paid",
+    "partial": "Part-paid",
+    "missed": "Missed",
+    "upcoming": "Upcoming"
+  }
+}

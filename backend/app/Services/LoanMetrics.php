@@ -51,6 +51,9 @@ class LoanMetrics
         $netDue = max(0, $dueNow - $advance);
         $netOverdue = max(0, $overdue - $advance);
         $totalOutstanding = max(0, $instRemaining + $penalty + $oldRemaining - $advance);
+        $weekly = Money::p($r->weekly_amount);
+        // how many weekly installments the customer is behind (after advance) – drives the colour coding
+        $pendingWeeks = $weekly > 0 ? (int) ceil($netDue / $weekly) : ($netDue > 0 ? 1 : 0);
 
         return [
             'total_repayment' => Money::s(Money::p($r->total_repayment)),
@@ -69,8 +72,27 @@ class LoanMetrics
             'old_khata_remaining' => Money::s($oldRemaining),
             'total_outstanding' => Money::s($totalOutstanding),
             'payable_now' => Money::s($netDue + $penalty + $oldRemaining), // what to ask the customer for today
+            'pending_weeks' => $pendingWeeks,
+            'tone' => self::tone($pendingWeeks, (int) $r->m_rem_count, $r->status ?? 'active'),
             'next_due_date' => $r->m_next_due,
             'can_close' => $instRemaining === 0 && $penalty === 0 && $oldRemaining === 0,
         ];
+    }
+
+    /**
+     * Colour of a khata in lists: green = up to date, yellow = 1 week behind, orange = 2 weeks, red = 3+ weeks.
+     * A finished khata is 'done'.
+     */
+    public static function tone(int $pendingWeeks, int $remainingInstallments, string $status = 'active'): string
+    {
+        if ($status === 'closed' || $remainingInstallments === 0) {
+            return 'done';
+        }
+        return match (true) {
+            $pendingWeeks <= 0 => 'green',
+            $pendingWeeks === 1 => 'yellow',
+            $pendingWeeks === 2 => 'orange',
+            default => 'red',
+        };
     }
 }

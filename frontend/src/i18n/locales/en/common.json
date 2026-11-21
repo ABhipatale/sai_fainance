@@ -137,7 +137,11 @@
     "home": "Home",
     "pendingShort": "Pending",
     "more": "More",
-    "penalties": "Penalties"
+    "penalties": "Penalties",
+    "sheet": "Khata List",
+    "weekly": "Weekly View",
+    "sheetShort": "List",
+    "weeklyShort": "Week"
   },
   "roles": {
     "admin": "Admin",

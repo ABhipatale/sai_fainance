@@ -13,6 +13,17 @@ export function useDebounced<T>(value: T, ms = 300): T {
   return v
 }
 
+export type Tone4 = 'green' | 'yellow' | 'orange' | 'red' | 'done'
+
+/** Colour coding of a khata by how many weeks the customer is behind. */
+export const TONE_STYLE: Record<Tone4, { bar: string; dot: string; chip: string; text: string }> = {
+  green: { bar: 'border-l-green-500', dot: 'bg-green-500', chip: 'bg-green-50 text-green-700 ring-green-200', text: 'text-green-700' },
+  yellow: { bar: 'border-l-yellow-400', dot: 'bg-yellow-400', chip: 'bg-yellow-50 text-yellow-800 ring-yellow-300', text: 'text-yellow-700' },
+  orange: { bar: 'border-l-orange-500', dot: 'bg-orange-500', chip: 'bg-orange-50 text-orange-700 ring-orange-200', text: 'text-orange-700' },
+  red: { bar: 'border-l-red-600', dot: 'bg-red-600', chip: 'bg-red-50 text-red-700 ring-red-200', text: 'text-red-700' },
+  done: { bar: 'border-l-slate-300', dot: 'bg-slate-400', chip: 'bg-slate-100 text-slate-600 ring-slate-200', text: 'text-slate-500' },
+}
+
 export interface LoanCard {
   id: number
   khata_no: string
@@ -32,6 +43,10 @@ export interface LoanCard {
   old_khata_remaining: string
   total_outstanding: string
   payable_now: string
+  pending_weeks: number
+  tone: Tone4
+  paid_installments: number
+  installments_count: number
   next_due_date: string | null
   customer?: { id: number; name: string; mobile: string; photo_url?: string | null; village?: string | null; lat?: number | null; lng?: number | null; recovery_user_id?: number | null; recovery_name?: string | null }
   [k: string]: any
@@ -53,13 +68,13 @@ export const statusBorder: Record<string, string> = {
 }
 
 /** Call / WhatsApp / Open location icon buttons. */
-export function ContactButtons({ customer, className }: { customer?: LoanCard['customer']; className?: string }) {
+export function ContactButtons({ customer, className, compact }: { customer?: LoanCard['customer']; className?: string; compact?: boolean }) {
   const { t } = useTranslation()
   if (!customer) return null
-  const base = 'grid h-10 w-10 place-items-center rounded-xl border border-slate-200 bg-white'
+  const base = cn('grid place-items-center rounded-lg border border-slate-200 bg-white', compact ? 'h-8 w-8' : 'h-10 w-10 rounded-xl')
   const map = mapsUrl(customer.lat, customer.lng)
   return (
-    <div className={cn('flex items-center gap-2', className)}>
+    <div className={cn('flex items-center', compact ? 'gap-1.5' : 'gap-2', className)}>
       {customer.mobile && (
         <a href={telUrl(customer.mobile)} aria-label={t('call')} title={t('call')} className={cn(base, 'text-navy-800')}>
           <Phone className="h-[18px] w-[18px]" />

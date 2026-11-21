@@ -1,0 +1,32 @@
+{
+  "khataCount": "खाते",
+  "active": "चालू खाते",
+  "completed": "पूर्ण हुए",
+  "listView": "सूची",
+  "gridView": "सभी सप्ताह (ग्रिड)",
+  "tone": {
+    "red": "३+ सप्ताह",
+    "orange": "२ सप्ताह",
+    "yellow": "१ सप्ताह",
+    "green": "समय पर"
+  },
+  "sortRemaining": "कम सप्ताह बाकी ऊपर",
+  "sortPending": "ज्यादा बकाया",
+  "sortName": "नाम",
+  "pendingTotal": "कुल बकाया",
+  "empty": "कोई खाता नहीं",
+  "customer": "खातेदार",
+  "paidWeeks": "भरे",
+  "left": "बाकी",
+  "weekly": "किस्त",
+  "pending": "बकाया",
+  "advance": "अग्रिम",
+  "outstanding": "कुल लेना",
+  "wk": " स.",
+  "legend": {
+    "paid": "भरा",
+    "partial": "आंशिक",
+    "missed": "चूका",
+    "upcoming": "आगे आएगा"
+  }
+}

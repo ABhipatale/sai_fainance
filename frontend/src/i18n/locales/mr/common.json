@@ -137,7 +137,11 @@
     "home": "मुख्य",
     "pendingShort": "प्रलंबित",
     "more": "अधिक",
-    "penalties": "दंड"
+    "penalties": "दंड",
+    "sheet": "खातेदार यादी",
+    "weekly": "साप्ताहिक आढावा",
+    "sheetShort": "यादी",
+    "weeklyShort": "आठवडा"
   },
   "roles": {
     "admin": "अ‍ॅडमिन",

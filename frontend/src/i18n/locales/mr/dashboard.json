@@ -31,7 +31,9 @@
     "nextCollection": "पुढील वसुली",
     "totalPending": "एकूण प्रलंबित",
     "cashByLocation": "ठिकाणानुसार रोख",
-    "staffTargets": "वसुली कर्मचारी लक्ष्य"
+    "staffTargets": "वसुली कर्मचारी लक्ष्य",
+    "loansGiven": "या आठवड्यात दिलेले कर्ज (रोख)",
+    "loansGivenSub": "खाती"
   },
   "opening": {
     "title": "सोमवार सुरुवातीची शिल्लक",

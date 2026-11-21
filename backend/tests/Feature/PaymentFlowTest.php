@@ -199,8 +199,8 @@ class PaymentFlowTest extends FinanceTestCase
         } catch (ValidationException) {
             $this->addToAssertionCount(1);
         }
-        $this->pay($loan, 90000);
-        $closed = LoanService::close($loan, [], $this->admin);
+        $this->pay($loan, 90000);   // fully paid → the khata closes by itself
+        $closed = $loan->fresh();
         $this->assertSame('closed', $closed->status);
         $this->assertSame('full', $closed->close_type);
     }
@@ -216,9 +216,9 @@ class PaymentFlowTest extends FinanceTestCase
     {
         $loan = $this->loan($this->customer(), ['installments_count' => 2, 'total_repayment' => 20000, 'principal_amount' => 16000]);
         $this->pay($loan, 20000); // 10000 installment 1 + 10000 advance (== remaining installment 2)
-        $this->assertSame('10000.00', $this->m($loan)['advance_balance']);
-        $closed = LoanService::close($loan, [], $this->admin);   // closing applies the advance to installment 2
-        $this->assertSame('closed', $closed->status);
+        // advance that covers every remaining week is applied at once and the khata closes early
+        $this->assertSame('closed', $loan->fresh()->status);
+        $this->assertSame('0.00', $this->m($loan)['advance_balance']);
         $this->assertSame('advanced_covered', $loan->installments()->where('number', 2)->first()->state);
     }
 }

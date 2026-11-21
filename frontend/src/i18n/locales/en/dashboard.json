@@ -31,7 +31,9 @@
     "nextCollection": "Next collection",
     "totalPending": "Total pending",
     "cashByLocation": "Cash by location",
-    "staffTargets": "Recovery staff targets"
+    "staffTargets": "Recovery staff targets",
+    "loansGiven": "Loans given this week (cash)",
+    "loansGivenSub": "khata"
   },
   "opening": {
     "title": "Monday opening balance",

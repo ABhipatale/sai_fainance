@@ -148,7 +148,7 @@ export default function CollectSheet({ open, onClose, loan, mode: initialMode = 
       setConfirm(false)
       setDone({ id: res.payment.id, receipt: res.receipt, amount: res.payment.amount })
       if (res.duplicate) toast.success(t('collection.sheet.duplicate'))
-      ;['collection', 'pending', 'advance', 'dashboard', 'loan', 'customer', 'payments'].forEach((k) => qc.invalidateQueries({ queryKey: [k] }))
+      ;['collection', 'pending', 'advance', 'dashboard', 'loan', 'customer', 'payments', 'sheet', 'weekly'].forEach((k) => qc.invalidateQueries({ queryKey: [k] }))
       onDone?.()
     } catch (e) {
       setConfirm(false)

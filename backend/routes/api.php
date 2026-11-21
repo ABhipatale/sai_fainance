@@ -12,6 +12,7 @@ use App\Http\Controllers\Api\PenaltyController;
 use App\Http\Controllers\Api\RecoveryListController;
 use App\Http\Controllers\Api\ReportController;
 use App\Http\Controllers\Api\SettingsController;
+use App\Http\Controllers\Api\SheetController;
 use App\Http\Controllers\Api\UserController;
 use Illuminate\Support\Facades\Route;
 
@@ -72,6 +73,10 @@ Route::middleware(['auth:sanctum', 'throttle:api'])->group(function () {
     // pending / overdue
     Route::get('pending-recovery', [RecoveryListController::class, 'pending'])->middleware('permission:payments.view');
     Route::get('overdue-recovery', [RecoveryListController::class, 'overdue'])->middleware('permission:payments.view');
+
+    // khata sheet (compact list + grid) and week-wise report
+    Route::get('khata-sheet', [SheetController::class, 'sheet'])->middleware('permission:payments.view');
+    Route::get('weekly-report', [SheetController::class, 'weekly'])->middleware('permission:payments.view');
 
     // penalties
     Route::get('penalties', [PenaltyController::class, 'index'])->middleware('permission:penalties.view');

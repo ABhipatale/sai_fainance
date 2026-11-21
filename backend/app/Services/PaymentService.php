@@ -189,8 +189,32 @@ class PaymentService
             "Collection {$payment->receipt_no} – {$loan->khata_no}", $date, $by->id,
             ['payment_id' => $payment->id, 'loan_account_id' => $loan->id]);
 
+        self::autoClose($loan, $by);
+
         Audit::log('payment.created', $payment, null, ['amount' => Money::s($total), 'receipt' => $payment->receipt_no, 'khata' => $loan->khata_no]);
         return $payment->fresh(['allocations']);
+    }
+
+    public const AUTO_CLOSE_NOTE = 'Auto-closed: fully paid';
+
+    /**
+     * A khata that is completely paid closes by itself, so it leaves every active list. If the customer paid
+     * the remaining weeks in advance, that advance is applied to all remaining installments first (early close).
+     * Penalties / old khata must be zero as well; unused advance is never swallowed (manual close + refund).
+     */
+    private static function autoClose(LoanAccount $loan, User $by): void
+    {
+        $unpaid = (int) LoanInstallment::where('loan_account_id', $loan->id)->get()->sum(fn ($i) => $i->remainingPaise());
+        $adv = LedgerService::advanceBalance($loan->id);
+        if ($unpaid > 0 && $adv >= $unpaid) {
+            AdvanceService::applyDue($loan, '2999-12-31', $by->id);
+        }
+        $m = LoanMetrics::format(LoanMetrics::query()->whereKey($loan->id)->first());
+        if (!$m['can_close'] || Money::p($m['advance_balance']) > 0) {
+            return;
+        }
+        $loan->update(['status' => 'closed', 'closed_at' => now(), 'closed_by' => $by->id, 'close_type' => 'full', 'close_note' => self::AUTO_CLOSE_NOTE]);
+        Audit::log('loan.closed', $loan, null, ['type' => 'full', 'note' => self::AUTO_CLOSE_NOTE]);
     }
 
     /**
@@ -208,6 +232,10 @@ class PaymentService
             $latest = Payment::where('loan_account_id', $loan->id)->where('status', 'completed')->max('id');
             if ((int) $latest !== (int) $payment->id) {
                 throw ValidationException::withMessages(['payment' => ['Only the most recent payment of this khata can be reversed. Reverse newer payments first.']]);
+            }
+            if ($loan->status === 'closed' && $loan->close_note === self::AUTO_CLOSE_NOTE) {
+                // reversing a payment of an auto-closed khata re-opens it
+                $loan->update(['status' => 'active', 'closed_at' => null, 'closed_by' => null, 'close_type' => null, 'close_note' => null]);
             }
             $today = now()->toDateString();
 

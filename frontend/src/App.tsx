@@ -15,6 +15,8 @@ const LoanDetail = lazy(() => import('@/pages/LoanDetail'))
 const Collection = lazy(() => import('@/pages/Collection'))
 const Receipt = lazy(() => import('@/pages/Receipt'))
 const Pending = lazy(() => import('@/pages/Pending'))
+const KhataSheet = lazy(() => import('@/pages/KhataSheet'))
+const Weekly = lazy(() => import('@/pages/Weekly'))
 const Advance = lazy(() => import('@/pages/Advance'))
 const Penalties = lazy(() => import('@/pages/Penalties'))
 const Cash = lazy(() => import('@/pages/Cash'))
@@ -38,6 +40,8 @@ function Perm({ p, children }: { p: string; children: ReactNode }) {
 
 function Home() {
   const { can } = useAuth()
+  // main screen = the week-wise view; the old statistics dashboard lives at /dashboard
+  if (can('payments.view')) return <Weekly />
   return can('dashboard.view') ? <Dashboard /> : <Navigate to="/collection" replace />
 }
 
@@ -58,6 +62,9 @@ export default function App() {
             <Route path="collection" element={<Perm p="payments.collect"><Collection /></Perm>} />
             <Route path="receipt/:id" element={<Perm p="payments.view"><Receipt /></Perm>} />
             <Route path="pending" element={<Perm p="payments.view"><Pending /></Perm>} />
+            <Route path="sheet" element={<Perm p="payments.view"><KhataSheet /></Perm>} />
+            <Route path="weekly" element={<Navigate to="/" replace />} />
+            <Route path="dashboard" element={<Perm p="dashboard.view"><Dashboard /></Perm>} />
             <Route path="advance" element={<Perm p="payments.view"><Advance /></Perm>} />
             <Route path="penalties" element={<Perm p="penalties.view"><Penalties /></Perm>} />
             <Route path="cash" element={<Perm p="cash.view"><Cash /></Perm>} />

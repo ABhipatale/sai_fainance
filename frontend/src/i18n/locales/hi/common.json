@@ -137,7 +137,11 @@
     "home": "होम",
     "pendingShort": "लंबित",
     "more": "और",
-    "penalties": "जुर्माना"
+    "penalties": "जुर्माना",
+    "sheet": "खातेदार सूची",
+    "weekly": "साप्ताहिक रिपोर्ट",
+    "sheetShort": "सूची",
+    "weeklyShort": "सप्ताह"
   },
   "roles": {
     "admin": "एडमिन",

@@ -70,6 +70,13 @@ class DashboardController extends ApiController
         $weeklyExpected = Money::p(LoanInstallment::whereIn('loan_account_id', $loans->pluck('id'))
             ->whereBetween('due_date', [$t, $nextCollect->toDateString()])->selectRaw('coalesce(sum(expected_amount - paid_amount - waived_amount),0) as s')->value('s'));
 
+        // loans handed out in the current collection week (Tue → Mon) – the owner's Monday figure
+        $wkStart = $today->copy()->startOfDay();
+        while ($wkStart->dayOfWeek !== $collectDay) {
+            $wkStart->subDay();
+        }
+        $given = Scope::loans(LoanAccount::query(), $u)->whereBetween('disbursement_date', [$wkStart->toDateString(), $wkStart->copy()->addDays(6)->toDateString()])->get();
+
         $locations = $u->isRecovery() ? collect() : CashLocation::where('status', 'active')->orderBy('name')->get();
         $out['monday'] = [
             'confirmed' => OpeningBalance::where('week_date', $weekStart)->exists(),
@@ -79,6 +86,11 @@ class DashboardController extends ApiController
             'weekly_expected' => Money::s($weeklyExpected),
             'total_pending' => $cards['total_pending'],
             'next_collection_date' => $nextCollect->toDateString(),
+            'loans_given' => [
+                'week_start' => $wkStart->toDateString(), 'week_end' => $wkStart->copy()->addDays(6)->toDateString(), 'count' => $given->count(),
+                'cash_given' => Money::s($given->sum(fn ($l) => Money::p($l->principal_amount) - Money::p($l->processing_charges) - Money::p($l->additional_charges))),
+                'total_repayment' => Money::s($given->sum(fn ($l) => Money::p($l->total_repayment))),
+            ],
         ];
 
         // --- Collection day -----------------------------------------------------------------------------

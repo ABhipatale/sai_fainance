@@ -20,7 +20,7 @@ function Progress({ value, tone = 'bg-ok' }: { value: number; tone?: string }) {
 }
 
 /** Monday opening-balance confirmation (defaults to previous closing; manual adjustments need a note). */
-function OpeningSheet({ open, onClose }: { open: boolean; onClose: () => void }) {
+export function OpeningSheet({ open, onClose }: { open: boolean; onClose: () => void }) {
   const { t } = useTranslation()
   const toast = useToast()
   const qc = useQueryClient()
@@ -200,6 +200,18 @@ export default function Dashboard() {
                     <StatCard label={t('dashboard.monday.weeklyExpected')} value={<Money v={d.monday.weekly_expected} />} tone="navy" sub={`${t('dashboard.monday.nextCollection')}: ${fdate(d.monday.next_collection_date)}`} icon={<CalendarCheck className="h-5 w-5" />} />
                     <StatCard label={t('dashboard.monday.totalPending')} value={<Money v={d.monday.total_pending} />} tone="pend" icon={<Clock className="h-5 w-5" />} />
                   </div>
+
+                  {d.monday.loans_given && (
+                    <Link to="/" className="mt-3 block">
+                      <StatCard label={t('dashboard.monday.loansGiven')} value={<Money v={d.monday.loans_given.cash_given} />} tone="navy" sub={`${d.monday.loans_given.count} ${t('dashboard.monday.loansGivenSub')} · ${fdate(d.monday.loans_given.week_start)} – ${fdate(d.monday.loans_given.week_end)}`} icon={<HandCoins className="h-5 w-5" />} />
+                    </Link>
+                  )}
+
+                  {d.monday.loans_given && (
+                    <Link to="/weekly" className="mt-3 block">
+                      <StatCard label={t('dashboard.monday.loansGiven')} value={<Money v={d.monday.loans_given.cash_given} />} tone="navy" sub={`${d.monday.loans_given.count} ${t('dashboard.monday.loansGivenSub')} · ${fdate(d.monday.loans_given.week_start)} – ${fdate(d.monday.loans_given.week_end)}`} icon={<HandCoins className="h-5 w-5" />} />
+                    </Link>
+                  )}
 
                   <Card className="mt-4 p-4">
                     <div className="mb-3 flex items-center justify-between">

@@ -1,0 +1,40 @@
+{
+  "prev": "Previous week",
+  "next": "Next week",
+  "thisWeek": "This week",
+  "goCurrent": "← Back to current week",
+  "pickDate": "Pick a date",
+  "expected": "Expected",
+  "collected": "Collected",
+  "pending": "Pending",
+  "carry": "Older pending",
+  "carryHint": "from before this week",
+  "khata": "khata",
+  "paidKhata": "Khata paid",
+  "advanceIn": "Advance received",
+  "penaltyIn": "Penalty collected",
+  "given": "Loans given this week (cash)",
+  "toRepay": "to be repaid",
+  "noGiven": "No loans given this week",
+  "firstDue": "First due",
+  "filter": {
+    "all": "All",
+    "pending": "Pending",
+    "paid": "Paid"
+  },
+  "empty": "Nothing recorded for this week",
+  "week": "Week",
+  "state": {
+    "paid": "Paid",
+    "partial": "Part-paid",
+    "pending": "Pending",
+    "none": "—"
+  },
+  "due": "Due",
+  "received": "Received",
+  "stillPending": "Pending",
+  "advance": "Advance",
+  "penalty": "Penalty",
+  "weeksLeft": "Weeks left",
+  "cash": "Cash balance"
+}

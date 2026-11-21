@@ -1,0 +1,32 @@
+{
+  "khataCount": "खाती",
+  "active": "चालू खाती",
+  "completed": "पूर्ण झालेली",
+  "listView": "यादी",
+  "gridView": "सर्व आठवडे (ग्रीड)",
+  "tone": {
+    "red": "३+ आठवडे",
+    "orange": "२ आठवडे",
+    "yellow": "१ आठवडा",
+    "green": "वेळेवर"
+  },
+  "sortRemaining": "कमी आठवडे बाकी वर",
+  "sortPending": "जास्त थकबाकी",
+  "sortName": "नाव",
+  "pendingTotal": "एकूण प्रलंबित",
+  "empty": "खाती नाहीत",
+  "customer": "खातेदार",
+  "paidWeeks": "भरले",
+  "left": "बाकी",
+  "weekly": "हप्ता",
+  "pending": "प्रलंबित",
+  "advance": "आगाऊ",
+  "outstanding": "एकूण येणे",
+  "wk": " आ.",
+  "legend": {
+    "paid": "भरले",
+    "partial": "अर्धवट",
+    "missed": "चुकले",
+    "upcoming": "पुढे येणार"
+  }
+}

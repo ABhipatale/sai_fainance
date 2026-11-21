@@ -31,7 +31,9 @@
     "nextCollection": "अगली वसूली",
     "totalPending": "कुल लंबित",
     "cashByLocation": "स्थान के अनुसार नकद",
-    "staffTargets": "वसूली कर्मचारी लक्ष्य"
+    "staffTargets": "वसूली कर्मचारी लक्ष्य",
+    "loansGiven": "इस सप्ताह दिया कर्ज (नकद)",
+    "loansGivenSub": "खाते"
   },
   "opening": {
     "title": "सोमवार प्रारंभिक शेष",

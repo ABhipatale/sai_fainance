@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react'
 import { NavLink, Outlet, useLocation } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import {
-  BarChart3, Banknote, CloudOff, Download, FilePlus2, Home, Landmark, LogOut, MoreHorizontal, RefreshCw, Settings, ShieldAlert, Users, UserCog, Wallet, Clock,
+  BarChart3, Banknote, CalendarRange, ListChecks, CloudOff, Download, FilePlus2, Home, LogOut, MoreHorizontal, RefreshCw, Settings, ShieldAlert, Users, UserCog,
 } from 'lucide-react'
 import { useAuth } from '@/lib/auth'
 import { syncQueue, useQueue } from '@/lib/offline'
@@ -12,13 +12,11 @@ import { Avatar, Sheet, cn } from './ui'
 interface NavItem { to: string; key: string; icon: typeof Home; perm?: string; end?: boolean }
 
 const NAV: NavItem[] = [
-  { to: '/', key: 'dashboard', icon: Home, perm: 'dashboard.view', end: true },
+  { to: '/', key: 'weekly', icon: CalendarRange, perm: 'payments.view', end: true },
   { to: '/customers', key: 'customers', icon: Users, perm: 'customers.view' },
   { to: '/khata/new', key: 'newKhata', icon: FilePlus2, perm: 'loans.create' },
   { to: '/collection', key: 'collection', icon: Banknote, perm: 'payments.collect' },
-  { to: '/pending', key: 'pending', icon: Clock, perm: 'payments.view' },
-  { to: '/advance', key: 'advance', icon: Wallet, perm: 'payments.view' },
-  { to: '/cash', key: 'cash', icon: Landmark, perm: 'cash.view' },
+  { to: '/sheet', key: 'sheet', icon: ListChecks, perm: 'payments.view' },
   { to: '/staff', key: 'staff', icon: UserCog, perm: 'recovery.view' },
   { to: '/reports', key: 'reports', icon: BarChart3, perm: 'reports.view' },
   { to: '/penalties', key: 'penalties', icon: ShieldAlert, perm: 'penalties.view' },
@@ -26,10 +24,10 @@ const NAV: NavItem[] = [
 ]
 
 const BOTTOM = [
-  { to: '/', key: 'home', icon: Home, perm: 'dashboard.view', end: true },
-  { to: '/customers', key: 'customers', icon: Users, perm: 'customers.view' },
+  { to: '/', key: 'weeklyShort', icon: CalendarRange, perm: 'payments.view', end: true },
   { to: '/collection', key: 'collection', icon: Banknote, perm: 'payments.collect' },
-  { to: '/pending', key: 'pendingShort', icon: Clock, perm: 'payments.view' },
+  { to: '/sheet', key: 'sheetShort', icon: ListChecks, perm: 'payments.view' },
+  { to: '/customers', key: 'customers', icon: Users, perm: 'customers.view' },
 ]
 
 let deferredPrompt: any = null
