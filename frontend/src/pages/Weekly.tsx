@@ -2,11 +2,12 @@ import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import { keepPreviousData, useQuery } from '@tanstack/react-query'
-import { Banknote, CalendarDays, ChevronLeft, ChevronRight, HandCoins, Landmark } from 'lucide-react'
+import { Banknote, CalendarDays, ChevronLeft, ChevronRight, HandCoins, Landmark, MessageSquareText } from 'lucide-react'
 import { get, getPage } from '@/lib/api'
 import { useAuth } from '@/lib/auth'
 import { fdate, num } from '@/lib/format'
 import { Button, Card, EmptyState, ErrorState, ListSkeleton, Money, PageHeader, SearchInput, cn } from '@/components/ui'
+import CommentSheet from '@/components/CommentSheet'
 import { OpeningSheet } from '@/pages/Dashboard'
 import CollectSheet from '@/components/CollectSheet'
 import { TONE_STYLE, useDebounced, type LoanCard } from '@/components/FlowParts'
@@ -38,6 +39,7 @@ export default function Weekly() {
   const [sheet, setSheet] = useState<LoanCard | null>(null)
   const [showGiven, setShowGiven] = useState(false)
   const [openSheet, setOpenSheet] = useState(false)
+  const [commentFor, setCommentFor] = useState<LoanCard | null>(null)
   const cash = useQuery({ queryKey: ['cash-locations', 'week'], queryFn: () => get<{ locations: any[]; total_cash: string }>('/cash-locations', { status: 'active' }), enabled: can('cash.view') })
   const cashRows = cash.data?.locations ?? []
   const cashTotal = num(cash.data?.total_cash)
@@ -164,10 +166,19 @@ export default function Weekly() {
                   <div className="truncate text-[11px] text-slate-500">{c.khata_no}{c.customer?.village ? ` · ${c.customer.village}` : ''} · {t('weekly.week')} {w.installment_no ?? '—'}/{c.installments_count}</div>
                 </button>
                 <span className={cn('shrink-0 rounded-full px-2.5 py-0.5 text-xs font-bold ring-1 ring-inset', STATE_TONE[w.state])}>{t(`weekly.state.${w.state}`)}</span>
+                <button onClick={() => setCommentFor(c)} aria-label={t('comments.title')} className="relative grid h-9 w-9 shrink-0 place-items-center rounded-lg border border-slate-200 bg-white text-amber-600">
+                  <MessageSquareText className="h-[18px] w-[18px]" />
+                  {c.comment_count > 0 && <span className="absolute -right-1 -top-1 grid h-4 min-w-4 place-items-center rounded-full bg-amber-500 px-1 text-[9px] font-bold text-white">{c.comment_count}</span>}
+                </button>
                 {canCollect && c.status === 'active' && num(c.net_due_now) > 0 && (
                   <button onClick={() => setSheet(c)} aria-label={t('collection.collect')} className="grid h-9 w-9 shrink-0 place-items-center rounded-lg bg-green-600 text-white active:scale-95"><Banknote className="h-[18px] w-[18px]" /></button>
                 )}
               </div>
+              {c.last_comment && (
+                <button onClick={() => setCommentFor(c)} className="mt-2 flex w-full items-start gap-1.5 rounded-md bg-amber-50 px-2 py-1 text-left text-[11px] text-amber-900">
+                  <MessageSquareText className="mt-0.5 h-3 w-3 shrink-0" /><span className="line-clamp-2">{c.last_comment}</span>
+                </button>
+              )}
               <div className="mt-2 grid grid-cols-3 gap-x-2 gap-y-1.5 text-xs sm:grid-cols-6">
                 <div><div className="text-[10px] uppercase text-slate-500">{t('weekly.due')}</div><b className="tabular-nums"><Money v={w.due} /></b></div>
                 <div><div className="text-[10px] uppercase text-slate-500">{t('weekly.received')}</div><b className="tabular-nums text-ok"><Money v={w.received} /></b></div>
@@ -181,6 +192,7 @@ export default function Weekly() {
         })}
       </div>
 
+      <CommentSheet loan={commentFor} onClose={() => setCommentFor(null)} />
       <OpeningSheet open={openSheet} onClose={() => setOpenSheet(false)} />
       <CollectSheet open={!!sheet} onClose={() => setSheet(null)} loan={sheet} />
     </div>

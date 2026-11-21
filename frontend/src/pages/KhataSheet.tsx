@@ -1,12 +1,13 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
-import { keepPreviousData, useQuery } from '@tanstack/react-query'
-import { ArrowDownUp, Banknote, Check, Grid3x3, List } from 'lucide-react'
-import { getPage } from '@/lib/api'
+import { keepPreviousData, useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
+import { ArrowDownUp, Banknote, Check, Grid3x3, List, UserCheck } from 'lucide-react'
+import { get, getPage, post } from '@/lib/api'
 import { useAuth } from '@/lib/auth'
 import { num } from '@/lib/format'
-import { Card, EmptyState, ErrorState, ListSkeleton, Money, PageHeader, SearchInput, Segmented, cn } from '@/components/ui'
+import { useToast } from '@/lib/toast'
+import { Button, Card, EmptyState, ErrorState, ListSkeleton, Money, PageHeader, SearchInput, Segmented, Select, StickyBar, cn, errMsg } from '@/components/ui'
 import CollectSheet from '@/components/CollectSheet'
 import { TONE_STYLE, useDebounced, type LoanCard, type Tone4 } from '@/components/FlowParts'
 
@@ -38,14 +39,38 @@ export default function KhataSheet() {
   const [sort, setSort] = useState<'remaining' | 'pending' | 'name'>('remaining')
   const [dir, setDir] = useState<'asc' | 'desc'>('asc')
   const [sheet, setSheet] = useState<LoanCard | null>(null)
+  const qc = useQueryClient()
+  const toast = useToast()
+  const canAssign = can('recovery.assign') && can('recovery.view')
+  const [staffFilter, setStaffFilter] = useState('')          // '' = all, '0' = not assigned, id = that person
+  const [selecting, setSelecting] = useState(false)
+  const [sel, setSel] = useState<Set<number>>(new Set())      // selected khata ids
+  const [target, setTarget] = useState('')
+  const staff = useQuery({ queryKey: ['users', 'recovery'], queryFn: () => get<any[]>('/users', { role: 'recovery' }), enabled: canAssign })
 
-  const params = { status, q: dq || undefined, tone: tone || undefined, sort, dir, grid: grid ? 1 : undefined }
+  const params = { status, recovery_user_id: staffFilter || undefined, q: dq || undefined, tone: tone || undefined, sort, dir, grid: grid ? 1 : undefined }
   const list = useQuery({ queryKey: ['sheet', params], queryFn: () => getPage<Row>('/khata-sheet', params), placeholderData: keepPreviousData })
   const rows = list.data?.data ?? []
   const meta = list.data?.meta
   const tones: Record<string, number> = meta?.tones ?? {}
   const cols = Math.max(meta?.max_weeks ?? 0, 1)
-  const canCollect = can('payments.collect') && status === 'active'
+  const canCollect = can('payments.collect') && status === 'active' && !selecting
+  const allSelected = rows.length > 0 && rows.every((c) => sel.has(c.id))
+  const toggle = (id: number) => setSel((p) => { const n = new Set(p); if (n.has(id)) n.delete(id); else n.add(id); return n })
+  const stopSelecting = () => { setSelecting(false); setSel(new Set()); setTarget('') }
+
+  const assign = useMutation({
+    mutationFn: (rec: string) => {
+      const ids = [...new Set(rows.filter((c) => sel.has(c.id)).map((c) => c.customer_id))]
+      return post<any>('/recovery/assign', { recovery_user_id: rec || null, customer_ids: ids })
+    },
+    onSuccess: (r, rec) => {
+      toast.success(rec ? t('sheet.done', { count: r?.assigned ?? 0 }) : t('sheet.doneUn', { count: r?.unassigned ?? 0 }))
+      ;['sheet', 'weekly', 'pending', 'collection', 'customers', 'users'].forEach((k) => qc.invalidateQueries({ queryKey: [k] }))
+      stopSelecting()
+    },
+    onError: (e) => toast.error(errMsg(e, t)),
+  })
 
   return (
     <div>
@@ -53,9 +78,14 @@ export default function KhataSheet() {
 
       <div className="mb-3 flex flex-wrap items-center gap-2">
         <Segmented value={status} onChange={(v) => { setStatus(v); setTone('') }} options={[{ value: 'active', label: t('sheet.active') }, { value: 'closed', label: t('sheet.completed') }]} />
+        {canAssign && status === 'active' && (
+          <button onClick={() => (selecting ? stopSelecting() : setSelecting(true))} className={cn('ml-auto inline-flex h-10 items-center gap-2 rounded-xl px-4 text-sm font-semibold transition', selecting ? 'bg-navy-800 text-white' : 'bg-white text-navy-800 ring-1 ring-slate-200')}>
+            <UserCheck className="h-4 w-4" />{t('sheet.assign')}
+          </button>
+        )}
         <button
           onClick={() => setGrid((g) => !g)}
-          className={cn('ml-auto inline-flex h-10 items-center gap-2 rounded-xl px-4 text-sm font-semibold transition', grid ? 'bg-navy-800 text-white' : 'bg-white text-navy-800 ring-1 ring-slate-200')}
+          className={cn('inline-flex h-10 items-center gap-2 rounded-xl px-4 text-sm font-semibold transition', !(canAssign && status === 'active') && 'ml-auto', grid ? 'bg-navy-800 text-white' : 'bg-white text-navy-800 ring-1 ring-slate-200')}
         >
           {grid ? <List className="h-4 w-4" /> : <Grid3x3 className="h-4 w-4" />}
           {grid ? t('sheet.listView') : t('sheet.gridView')}
@@ -87,6 +117,13 @@ export default function KhataSheet() {
           <option value="name">{t('sheet.sortName')}</option>
         </select>
         <button onClick={() => setDir(dir === 'asc' ? 'desc' : 'asc')} className="h-9 rounded-lg bg-white px-3 font-semibold text-navy-800 ring-1 ring-slate-200">{dir === 'asc' ? '↑' : '↓'}</button>
+        {canAssign && (
+          <select value={staffFilter} onChange={(e) => setStaffFilter(e.target.value)} className="h-9 max-w-[9rem] rounded-lg border border-slate-200 bg-white px-2 text-sm" aria-label={t('sheet.assignedTo')}>
+            <option value="">{t('sheet.allStaff')}</option>
+            <option value="0">{t('sheet.noStaff')}</option>
+            {(staff.data ?? []).map((u) => <option key={u.id} value={u.id}>{u.name}</option>)}
+          </select>
+        )}
         {meta && status === 'active' && <span className="ml-auto text-xs text-slate-500">{t('sheet.pendingTotal')}: <b className="text-pend"><Money v={meta.pending_total} /></b></span>}
       </div>
 
@@ -100,6 +137,7 @@ export default function KhataSheet() {
             <table className="w-full border-collapse text-left text-sm">
               <thead className="bg-slate-50 text-[11px] font-semibold uppercase tracking-wide text-slate-500">
                 <tr>
+                  {selecting && <th className="w-10 py-2 pl-3"><input type="checkbox" className="h-5 w-5" checked={allSelected} onChange={() => setSel(allSelected ? new Set() : new Set(rows.map((c) => c.id)))} aria-label={t('sheet.selectAll')} /></th>}
                   <th className="sticky left-0 z-10 bg-slate-50 py-2 pl-3 pr-2">{t('sheet.customer')}</th>
                   {grid ? (
                     <>
@@ -124,10 +162,11 @@ export default function KhataSheet() {
                   const st = TONE_STYLE[c.tone] ?? TONE_STYLE.green
                   const go = () => nav(can('loans.view') ? `/khata/${c.id}` : `/customers/${c.customer_id}`)
                   return (
-                    <tr key={c.id} className="active:bg-slate-50">
-                      <td className={cn('sticky left-0 z-10 cursor-pointer whitespace-nowrap border-l-4 bg-white py-2 pl-2 pr-2', st.bar)} onClick={go}>
+                    <tr key={c.id} className={cn('active:bg-slate-50', sel.has(c.id) && 'bg-navy-50/60')}>
+                      {selecting && <td className="w-10 py-2 pl-3"><input type="checkbox" className="h-5 w-5" checked={sel.has(c.id)} onChange={() => toggle(c.id)} /></td>}
+                      <td className={cn('sticky left-0 z-10 cursor-pointer whitespace-nowrap border-l-4 bg-white py-2 pl-2 pr-2', sel.has(c.id) && '!bg-navy-50', st.bar)} onClick={selecting ? () => toggle(c.id) : go}>
                         <div className="max-w-[9.5rem] truncate font-semibold leading-tight text-navy-900 sm:max-w-[16rem]">{c.customer?.name}</div>
-                        <div className="max-w-[9.5rem] truncate text-[11px] leading-tight text-slate-500 sm:max-w-[16rem]">{c.khata_no}{c.customer?.village ? ` · ${c.customer.village}` : ''}</div>
+                        <div className="max-w-[9.5rem] truncate text-[11px] leading-tight text-slate-500 sm:max-w-[16rem]">{c.khata_no}{c.customer?.village ? ` · ${c.customer.village}` : ''}{canAssign ? ` · ${c.customer?.recovery_name ?? '—'}` : ''}</div>
                       </td>
                       {grid ? (
                         <>
@@ -163,6 +202,21 @@ export default function KhataSheet() {
           </div>
         )}
       </Card>
+
+      {selecting && (
+        <StickyBar>
+          <div className="flex flex-wrap items-center gap-2">
+            <span className="text-sm font-bold text-navy-900">{sel.size} {t('sheet.selected')}</span>
+            <Select value={target} onChange={(e) => setTarget(e.target.value)} className="!h-10 min-w-0 flex-1 text-sm" aria-label={t('sheet.chooseStaff')}>
+              <option value="">{t('sheet.chooseStaff')}</option>
+              {(staff.data ?? []).filter((u) => u.status === 'active').map((u) => <option key={u.id} value={u.id}>{u.name}</option>)}
+            </Select>
+            <Button size="sm" className="!h-10" disabled={sel.size === 0 || !target} loading={assign.isPending} onClick={() => assign.mutate(target)}>{t('sheet.assignBtn')}</Button>
+            <Button size="sm" variant="secondary" className="!h-10" disabled={sel.size === 0 || assign.isPending} onClick={() => assign.mutate('')}>{t('sheet.unassign')}</Button>
+            <Button size="sm" variant="ghost" className="!h-10" onClick={stopSelecting}>{t('sheet.cancel')}</Button>
+          </div>
+        </StickyBar>
+      )}
 
       {grid && (
         <div className="mt-3 flex flex-wrap gap-x-4 gap-y-1 text-xs text-slate-600">

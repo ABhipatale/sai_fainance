@@ -73,6 +73,8 @@ export default function CustomerForm() {
   const save = useMutation({
     mutationFn: (v: V) => {
       const body: Record<string, unknown> = { ...v, photo, recovery_user_id: v.recovery_user_id || undefined }
+      // an empty select cannot travel in multipart data – tell the server explicitly to remove the recovery person
+      if (edit && can('recovery.assign') && !v.recovery_user_id) body.clear_recovery = 1
       if (docs) Object.assign(body, { aadhaar_photo: aPhoto, pan_photo: pPhoto })
       else { delete body.aadhaar_no; delete body.pan_no }
       return edit ? postForm(`/customers/${id}`, body, 'PUT') : postForm('/customers', body)

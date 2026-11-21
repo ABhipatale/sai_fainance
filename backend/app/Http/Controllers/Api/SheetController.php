@@ -33,8 +33,10 @@ class SheetController extends ApiController
 
         $items = $loans->map(fn ($l) => Present::loan($l))->values();
 
-        if ($v = $r->query('recovery_user_id')) {
-            $items = $items->filter(fn ($c) => (int) ($c['customer']['recovery_user_id'] ?? 0) === (int) $v);
+        if ($r->filled('recovery_user_id')) {
+            // 0 = khata whose customer has no recovery person yet
+            $v = (int) $r->query('recovery_user_id');
+            $items = $items->filter(fn ($c) => (int) ($c['customer']['recovery_user_id'] ?? 0) === $v);
         }
         if ($v = trim((string) $r->query('village'))) {
             $items = $items->filter(fn ($c) => mb_strtolower($c['customer']['village'] ?? '') === mb_strtolower($v));

@@ -44,6 +44,9 @@ export interface LoanCard {
   total_outstanding: string
   payable_now: string
   pending_weeks: number
+  comment_count: number
+  last_comment: string | null
+  last_comment_at: string | null
   tone: Tone4
   paid_installments: number
   installments_count: number

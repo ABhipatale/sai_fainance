@@ -28,5 +28,18 @@
     "partial": "Part-paid",
     "missed": "Missed",
     "upcoming": "Upcoming"
-  }
+  },
+  "assign": "Assign to recovery",
+  "selected": "selected",
+  "chooseStaff": "Choose recovery person",
+  "assignBtn": "Assign",
+  "unassign": "Unassign",
+  "allStaff": "All staff",
+  "noStaff": "Not assigned",
+  "done": "{{count}} customers assigned",
+  "doneUn": "{{count}} customers unassigned",
+  "selectAll": "Select all",
+  "clear": "Clear",
+  "cancel": "Close",
+  "assignedTo": "Recovery"
 }

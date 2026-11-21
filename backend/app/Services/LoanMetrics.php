@@ -35,6 +35,9 @@ class LoanMetrics
             ->selectRaw("(select coalesce(sum($rem),0) $inst and li.due_date = ?) as m_today_due", [$today])
             ->selectRaw("(select min(li.due_date) $inst and $rem > 0) as m_next_due")
             ->selectRaw("(select coalesce(sum(pm.amount),0) from payments pm where pm.loan_account_id = loan_accounts.id and pm.payment_date = ? and pm.status = 'completed') as m_paid_today", [$today])
+            ->selectRaw('(select count(*) from loan_comments lc where lc.loan_account_id = loan_accounts.id) as m_comment_count')
+            ->selectRaw('(select lc.body from loan_comments lc where lc.loan_account_id = loan_accounts.id order by lc.id desc limit 1) as m_last_comment')
+            ->selectRaw('(select lc.created_at from loan_comments lc where lc.loan_account_id = loan_accounts.id order by lc.id desc limit 1) as m_last_comment_at')
             ->selectRaw("(select coalesce(sum(al.credit - al.debit),0) from advance_ledger al where al.loan_account_id = loan_accounts.id) as m_advance")
             ->selectRaw("(select coalesce(sum(p.amount - p.paid_amount - p.waived_amount),0) from penalties p where p.loan_account_id = loan_accounts.id and p.status in ('open','partial')) as m_penalty");
     }
@@ -72,6 +75,9 @@ class LoanMetrics
             'old_khata_remaining' => Money::s($oldRemaining),
             'total_outstanding' => Money::s($totalOutstanding),
             'payable_now' => Money::s($netDue + $penalty + $oldRemaining), // what to ask the customer for today
+            'comment_count' => (int) $r->m_comment_count,
+            'last_comment' => $r->m_last_comment,
+            'last_comment_at' => $r->m_last_comment_at,
             'pending_weeks' => $pendingWeeks,
             'tone' => self::tone($pendingWeeks, (int) $r->m_rem_count, $r->status ?? 'active'),
             'next_due_date' => $r->m_next_due,

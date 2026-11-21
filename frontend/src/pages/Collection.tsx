@@ -2,12 +2,13 @@ import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import { keepPreviousData, useQuery } from '@tanstack/react-query'
-import { CloudOff, RefreshCw, Trash2, Wallet } from 'lucide-react'
+import { CloudOff, MessageSquareText, RefreshCw, Trash2, Wallet } from 'lucide-react'
 import { get, getPage } from '@/lib/api'
 import { useAuth } from '@/lib/auth'
 import { num } from '@/lib/format'
 import { removeQueued, syncQueue, useQueue } from '@/lib/offline'
 import { Avatar, Badge, Button, Card, EmptyState, ErrorState, ListSkeleton, Money, PageHeader, Pagination, SearchInput, Skeleton, StatusBadge, cn } from '@/components/ui'
+import CommentSheet from '@/components/CommentSheet'
 import CollectSheet, { type CollectMode } from '@/components/CollectSheet'
 import { ContactButtons, loanStatus, statusBorder, useDebounced, type LoanCard } from '@/components/FlowParts'
 
@@ -24,6 +25,7 @@ export default function Collection() {
   const [page, setPage] = useState(1)
   const [sheet, setSheet] = useState<{ loan: LoanCard; mode: CollectMode; partial?: boolean } | null>(null)
   const searching = dq.length > 0
+  const [commentFor, setCommentFor] = useState<LoanCard | null>(null)
 
   const today = useQuery({
     queryKey: ['collection', 'today', filter, page],
@@ -142,6 +144,11 @@ export default function Collection() {
               </div>
 
               {/* line 2: only the numbers that matter (zeros stay hidden) */}
+              {c.last_comment && (
+                <button onClick={() => setCommentFor(c)} className="mt-1.5 flex w-full items-start gap-1.5 rounded-md bg-amber-50 px-2 py-1 text-left text-[11px] text-amber-900">
+                  <MessageSquareText className="mt-0.5 h-3 w-3 shrink-0" /><span className="line-clamp-2">{c.last_comment}</span>
+                </button>
+              )}
               {(prev > 0 || adv > 0) && (
                 <div className="mt-1.5 flex flex-wrap gap-1.5 text-[11px] font-semibold">
                   {prev > 0 && <span className="rounded-md bg-red-50 px-1.5 py-0.5 text-red-700">{t('collection.prevPending')} <Money v={c.net_overdue} /></span>}
@@ -155,7 +162,11 @@ export default function Collection() {
                 <Button size="sm" variant="success" className="!h-9 flex-1 md:!w-28 md:flex-none" onClick={() => open(c)}>{t('collection.collect')}</Button>
                 <Button size="sm" variant="secondary" className="!h-9 !px-3" onClick={() => open(c, 'auto', true)}>{t('collection.partial')}</Button>
                 <Button size="sm" variant="secondary" className="!h-9 !px-3 !text-adv" onClick={() => open(c, 'advance')}>{t('collection.advanceBtn')}</Button>
-                <ContactButtons customer={c.customer} compact className="ml-0.5" />
+                <button onClick={() => setCommentFor(c)} aria-label={t('comments.title')} className="relative grid h-8 w-8 place-items-center rounded-lg border border-slate-200 bg-white text-amber-600">
+                  <MessageSquareText className="h-[18px] w-[18px]" />
+                  {c.comment_count > 0 && <span className="absolute -right-1 -top-1 grid h-4 min-w-4 place-items-center rounded-full bg-amber-500 px-1 text-[9px] font-bold text-white">{c.comment_count}</span>}
+                </button>
+                <ContactButtons customer={c.customer} compact />
               </div>
               </div>
             </Card>
@@ -165,6 +176,7 @@ export default function Collection() {
 
       {!searching && today.data && <Pagination page={page} last={today.data.meta.last_page} onPage={setPage} />}
 
+      <CommentSheet loan={commentFor} onClose={() => setCommentFor(null)} />
       <CollectSheet open={!!sheet} onClose={() => setSheet(null)} loan={sheet?.loan ?? null} mode={sheet?.mode} partial={sheet?.partial} />
     </div>
   )

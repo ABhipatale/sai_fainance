@@ -1,0 +1,14 @@
+{
+  "title": "Comments",
+  "add": "Save comment",
+  "placeholder": "Write a comment… (e.g. will pay next Tuesday)",
+  "empty": "No comments yet",
+  "saved": "Comment saved",
+  "quick": [
+    "Will pay next week",
+    "Not at home",
+    "Phone off",
+    "No money",
+    "Met, will pay tomorrow"
+  ]
+}

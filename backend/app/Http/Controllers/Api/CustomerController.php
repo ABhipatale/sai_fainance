@@ -48,6 +48,7 @@ class CustomerController extends ApiController
             'aadhaar_photo' => 'nullable|image|max:6144',
             'pan_photo' => 'nullable|image|max:6144',
             'recovery_user_id' => 'nullable|exists:users,id',
+            'clear_recovery' => 'nullable|boolean', // multipart forms drop empty values, so "remove" is sent explicitly
         ];
     }
 
@@ -174,8 +175,10 @@ class CustomerController extends ApiController
                 $customer->address()->updateOrCreate([], $addr);
             }
             $this->saveDocs($customer, $d, $r);
-            if (array_key_exists('recovery_user_id', $d)) {
-                $this->assign($customer, $d['recovery_user_id'], $u);
+            if (!empty($d['recovery_user_id'])) {
+                $this->assign($customer, (int) $d['recovery_user_id'], $u);
+            } elseif ($r->boolean('clear_recovery') || array_key_exists('recovery_user_id', $d)) {
+                $this->assign($customer, null, $u);   // removes the assignment (needs recovery.assign)
             }
         });
         Audit::log('customer.updated', $customer, $old, $customer->fresh()->toArray());

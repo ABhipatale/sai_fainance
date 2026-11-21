@@ -28,5 +28,18 @@
     "partial": "अर्धवट",
     "missed": "चुकले",
     "upcoming": "पुढे येणार"
-  }
+  },
+  "assign": "वसुलीसाठी वाटप",
+  "selected": "निवडले",
+  "chooseStaff": "वसुली कर्मचारी निवडा",
+  "assignBtn": "वाटप करा",
+  "unassign": "वाटप काढा",
+  "allStaff": "सर्व कर्मचारी",
+  "noStaff": "वाटप नाही",
+  "done": "{{count}} ग्राहक वाटले",
+  "doneUn": "{{count}} ग्राहकांचे वाटप काढले",
+  "selectAll": "सर्व निवडा",
+  "clear": "रद्द करा",
+  "cancel": "बंद करा",
+  "assignedTo": "वसुली"
 }

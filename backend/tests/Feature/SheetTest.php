@@ -74,4 +74,60 @@ class SheetTest extends FinanceTestCase
         // any date inside a week resolves to that week's collection day
         $this->actingAsToken($this->admin)->getJson('/api/weekly-report?week_start=2026-11-13')->assertOk()->assertJsonPath('week.start', '2026-11-10');
     }
+
+    public function test_admin_assigns_selected_khata_customers_to_recovery_and_sheet_filters_by_them(): void
+    {
+        $a = $this->customer('A', false);
+        $b = $this->customer('B', false);
+        $this->loan($a);
+        $this->loan($b);
+
+        $this->actingAsToken($this->admin)->postJson('/api/recovery/assign', ['recovery_user_id' => $this->recovery->id, 'customer_ids' => [$a->id]])->assertOk();
+
+        $mine = $this->actingAsToken($this->admin)->getJson('/api/khata-sheet?recovery_user_id=' . $this->recovery->id)->assertOk();
+        $this->assertSame(['A'], array_map(fn ($r) => $r['customer']['name'], $mine->json('data')));
+        $free = $this->actingAsToken($this->admin)->getJson('/api/khata-sheet?recovery_user_id=0')->assertOk();
+        $this->assertSame(['B'], array_map(fn ($r) => $r['customer']['name'], $free->json('data')));
+
+        // the recovery person only ever sees their own list
+        $own = $this->actingAsToken($this->recovery)->getJson('/api/khata-sheet')->assertOk();
+        $this->assertSame(['A'], array_map(fn ($r) => $r['customer']['name'], $own->json('data')));
+
+        $this->actingAsToken($this->admin)->postJson('/api/recovery/assign', ['customer_ids' => [$a->id]])->assertOk();
+        $this->assertSame(0, \App\Models\RecoveryAssignment::where('customer_id', $a->id)->count());
+    }
+
+    public function test_customer_can_be_created_without_recovery_and_recovery_can_be_changed_or_removed(): void
+    {
+        $base = ['name' => 'Raju', 'occupation' => 'Farmer', 'mobile' => '9876500000', 'village' => 'V', 'taluka' => 'T', 'district' => 'D', 'state' => 'MH', 'pincode' => '413102', 'address' => 'x', 'lat' => 18.1, 'lng' => 74.5];
+        \Illuminate\Support\Facades\Storage::fake('local');
+        $photo = \Illuminate\Http\UploadedFile::fake()->image('p.jpg');
+
+        $id = $this->actingAsToken($this->admin)->post('/api/customers', $base + ['photo' => $photo], ['Accept' => 'application/json'])->assertSuccessful()->json('data.id');
+        $this->assertSame(0, \App\Models\RecoveryAssignment::where('customer_id', $id)->count());
+
+        $this->actingAsToken($this->admin)->post("/api/customers/{$id}", $base + ['_method' => 'PUT', 'recovery_user_id' => $this->recovery->id], ['Accept' => 'application/json'])->assertSuccessful();
+        $this->assertSame($this->recovery->id, \App\Models\RecoveryAssignment::where('customer_id', $id)->value('recovery_user_id'));
+
+        $this->actingAsToken($this->admin)->post("/api/customers/{$id}", $base + ['_method' => 'PUT', 'clear_recovery' => 1], ['Accept' => 'application/json'])->assertSuccessful();
+        $this->assertSame(0, \App\Models\RecoveryAssignment::where('customer_id', $id)->count());
+    }
+
+    public function test_recovery_can_comment_on_own_khata_only_and_comment_shows_in_lists(): void
+    {
+        $mine = $this->loan($this->customer('Mine'));
+        $other = $this->loan($this->customer('Other', false));
+
+        $this->actingAsToken($this->recovery)->postJson("/api/loan-accounts/{$mine->id}/comments", ['body' => 'Will pay next week'])->assertCreated();
+        $this->actingAsToken($this->recovery)->postJson("/api/loan-accounts/{$other->id}/comments", ['body' => 'x'])->assertForbidden();
+        $this->actingAsToken($this->recovery)->postJson("/api/loan-accounts/{$mine->id}/comments", ['body' => ''])->assertStatus(422);
+
+        $list = $this->actingAsToken($this->admin)->getJson("/api/loan-accounts/{$mine->id}/comments")->assertOk();
+        $this->assertSame('Will pay next week', $list->json('data.0.body'));
+        $this->assertSame('R', $list->json('data.0.user_name'));
+
+        $row = $this->actingAsToken($this->recovery)->getJson('/api/collection/today?filter=all')->assertOk()->json('data.0');
+        $this->assertSame('Will pay next week', $row['last_comment']);
+        $this->assertSame(1, $row['comment_count']);
+    }
 }

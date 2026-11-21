@@ -6,6 +6,7 @@ use App\Http\Controllers\Api\CustomerController;
 use App\Http\Controllers\Api\DashboardController;
 use App\Http\Controllers\Api\GuarantorController;
 use App\Http\Controllers\Api\LoanAccountController;
+use App\Http\Controllers\Api\LoanCommentController;
 use App\Http\Controllers\Api\MediaController;
 use App\Http\Controllers\Api\PaymentController;
 use App\Http\Controllers\Api\PenaltyController;
@@ -54,6 +55,10 @@ Route::middleware(['auth:sanctum', 'throttle:api'])->group(function () {
     Route::get('loan-accounts/{loanAccount}/installments', [LoanAccountController::class, 'installments'])->middleware('permission:loans.view');
     Route::post('loan-accounts/{loanAccount}/close', [LoanAccountController::class, 'close'])->middleware('permission:loans.close');
     Route::post('loan-accounts/{loanAccount}/advance-refund', [LoanAccountController::class, 'refundAdvance'])->middleware('permission:advance.refund');
+
+    // khata comments
+    Route::get('loan-accounts/{loanAccount}/comments', [LoanCommentController::class, 'index'])->middleware('permission:payments.view,payments.collect');
+    Route::post('loan-accounts/{loanAccount}/comments', [LoanCommentController::class, 'store'])->middleware('permission:payments.collect');
 
     // collection
     Route::get('collection/search', [RecoveryListController::class, 'search'])->middleware('permission:payments.collect');

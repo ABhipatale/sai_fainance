@@ -113,7 +113,14 @@ class UserController extends ApiController
     public function assign(Request $r)
     {
         $by = $this->user($r);
-        $d = $r->validate(['recovery_user_id' => 'required|exists:users,id', 'customer_ids' => 'required|array|min:1', 'customer_ids.*' => 'integer|exists:customers,id']);
+        $d = $r->validate(['recovery_user_id' => 'nullable|exists:users,id', 'customer_ids' => 'required|array|min:1', 'customer_ids.*' => 'integer|exists:customers,id']);
+        if (empty($d['recovery_user_id'])) {
+            // no recovery person given = take these customers off whoever has them
+            $visible = Scope::customers(Customer::query(), $by)->whereIn('customers.id', $d['customer_ids'])->pluck('customers.id');
+            RecoveryAssignment::whereIn('customer_id', $visible)->delete();
+            Audit::log('recovery.unassigned', $by, null, ['customers' => $visible->all()]);
+            return $this->ok(['assigned' => 0, 'unassigned' => $visible->count()], 'Customers unassigned');
+        }
         $rec = User::where('role', 'recovery')->where('status', 'active')->findOrFail($d['recovery_user_id']);
         abort_if($by->isManager() && (int) $rec->manager_id !== $by->id, 403, 'Staff is not under your management.');
 

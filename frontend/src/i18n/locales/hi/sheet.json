@@ -28,5 +28,18 @@
     "partial": "आंशिक",
     "missed": "चूका",
     "upcoming": "आगे आएगा"
-  }
+  },
+  "assign": "वसूली के लिए आवंटन",
+  "selected": "चुने गए",
+  "chooseStaff": "वसूली कर्मचारी चुनें",
+  "assignBtn": "आवंटित करें",
+  "unassign": "आवंटन हटाएं",
+  "allStaff": "सभी कर्मचारी",
+  "noStaff": "आवंटित नहीं",
+  "done": "{{count}} ग्राहक आवंटित हुए",
+  "doneUn": "{{count}} ग्राहकों का आवंटन हटाया",
+  "selectAll": "सभी चुनें",
+  "clear": "रद्द करें",
+  "cancel": "बंद करें",
+  "assignedTo": "वसूली"
 }
