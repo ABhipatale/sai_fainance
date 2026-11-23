@@ -100,6 +100,7 @@ class SheetController extends ApiController
 
     public function weekly(Request $r)
     {
+        $r->validate(['week_start' => 'nullable|date_format:Y-m-d']);
         $u = $this->user($r);
         $day = (int) FinanceSetting::get('collection_weekday', 2);
         $start = $this->weekStart($r->filled('week_start') ? Carbon::parse($r->query('week_start')) : now(), $day);

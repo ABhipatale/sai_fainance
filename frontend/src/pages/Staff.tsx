@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { Camera, Check, Phone, Plus, UserCheck, UserX } from 'lucide-react'
 import { get, getPage, post, postForm } from '@/lib/api'
-import { compressImage, money, telUrl } from '@/lib/format'
+import { compressImage, money, telUrl, strongPassword } from '@/lib/format'
 import { useAuth } from '@/lib/auth'
 import { useToast } from '@/lib/toast'
 import {
@@ -161,8 +161,8 @@ function StaffForm({ edit, role, onClose }: { edit: any | null; role: Role; onCl
     if (!f.name.trim()) er.name = t('validation.required')
     if (f.mobile && !/^\d{10}$/.test(f.mobile)) er.mobile = t('validation.mobile')
     if (f.username.trim().length < 3 || !/^[\w-]+$/.test(f.username.trim())) er.username = t('staff.errUsername')
-    if (!edit && f.password.length < 8) er.password = t('validation.password')
-    if (edit && f.password && f.password.length < 8) er.password = t('validation.password')
+    if (!edit && !strongPassword(f.password)) er.password = t('validation.password')
+    if (edit && f.password && !strongPassword(f.password)) er.password = t('validation.password')
     setErr(er)
     if (!Object.keys(er).length) m.mutate()
   }

@@ -4,7 +4,7 @@ import { useTranslation } from 'react-i18next'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { Camera, ChevronDown, Plus, Trash2, Users } from 'lucide-react'
 import { get, getPage, post, postForm, put } from '@/lib/api'
-import { compressImage, fdatetime } from '@/lib/format'
+import { compressImage, fdatetime, strongPassword } from '@/lib/format'
 import { useAuth } from '@/lib/auth'
 import { useToast } from '@/lib/toast'
 import { LANGS } from '@/i18n'
@@ -123,7 +123,7 @@ function Profile() {
   const submit = () => {
     const er: Record<string, string> = {}
     if (!f.current_password) er.current_password = t('validation.required')
-    if (f.password.length < 8) er.password = t('validation.password')
+    if (!strongPassword(f.password)) er.password = t('validation.password')
     if (f.password !== f.password_confirmation) er.password_confirmation = t('validation.passwordMatch')
     setErr(er)
     if (!Object.keys(er).length) pw.mutate()

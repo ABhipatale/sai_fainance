@@ -9,6 +9,9 @@ export function money(v: string | number | null | undefined, opts: { decimals?: 
   return '₹' + (whole ? inr0.format(n) : inr.format(n))
 }
 
+/** Same rule as the server: 8+ characters with at least one letter and one number. */
+export const strongPassword = (p: string) => p.length >= 8 && /[A-Za-z]/.test(p) && /\d/.test(p)
+
 export const num = (v: string | number | null | undefined) => Number(v ?? 0)
 
 /** YYYY-MM-DD (or ISO) → DD/MM/YYYY */

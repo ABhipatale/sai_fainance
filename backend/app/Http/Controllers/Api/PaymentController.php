@@ -95,7 +95,7 @@ class PaymentController extends ApiController
     /** Offline queue upload – each item is idempotent via its key, so retries never duplicate. */
     public function sync(Request $r)
     {
-        $r->validate(['items' => 'required|array|max:50']);
+        $r->validate(['items' => 'required|array|max:50', 'items.*' => 'array']);
         $out = [];
         foreach ($r->input('items') as $i => $item) {
             try {
@@ -113,8 +113,12 @@ class PaymentController extends ApiController
                 $out[] = ['index' => $i, 'key' => $item['idempotency_key'] ?? null, 'ok' => true, 'duplicate' => $dupe, 'receipt_no' => $p->receipt_no, 'payment_id' => $p->id];
             } catch (ValidationException $e) {
                 $out[] = ['index' => $i, 'key' => $item['idempotency_key'] ?? null, 'ok' => false, 'errors' => $e->errors()];
+            } catch (\Illuminate\Auth\Access\AuthorizationException|\Symfony\Component\HttpKernel\Exception\HttpExceptionInterface $e) {
+                $out[] = ['index' => $i, 'key' => $item['idempotency_key'] ?? null, 'ok' => false, 'errors' => ['_' => ['You do not have permission to perform this action.']]];
             } catch (\Throwable $e) {
-                $out[] = ['index' => $i, 'key' => $item['idempotency_key'] ?? null, 'ok' => false, 'errors' => ['_' => [$e->getMessage()]]];
+                // never send internal error text (SQL, paths) to the device – it goes to the server log instead
+                report($e);
+                $out[] = ['index' => $i, 'key' => $item['idempotency_key'] ?? null, 'ok' => false, 'errors' => ['_' => ['Could not save this payment. Please try again or contact the office.']]];
             }
         }
         return $this->ok($out);

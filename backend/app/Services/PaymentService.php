@@ -36,7 +36,7 @@ class PaymentService
     {
         $key = $d['idempotency_key'] ?? null;
         if ($key && ($existing = Payment::where('idempotency_key', $key)->first())) {
-            return [$existing, true];
+            return [self::sameRequest($existing, $d, $by), true];
         }
 
         try {
@@ -44,11 +44,23 @@ class PaymentService
         } catch (QueryException $e) {
             // two identical submissions raced – the unique idempotency key rejects the second
             if ($key && ($existing = Payment::where('idempotency_key', $key)->first())) {
-                return [$existing, true];
+                return [self::sameRequest($existing, $d, $by), true];
             }
             throw $e;
         }
         return [$payment, false];
+    }
+
+    /** Non-admin staff may record a payment at most this many days in the past (offline queue window). */
+    public const BACKDATE_DAYS = 7;
+
+    /** A retried key must come from the same user for the same khata – otherwise it is someone else's payment. */
+    private static function sameRequest(Payment $existing, array $d, User $by): Payment
+    {
+        if ((int) $existing->loan_account_id !== (int) $d['loan_account_id'] || (int) $existing->created_by !== (int) $by->id) {
+            throw ValidationException::withMessages(['idempotency_key' => ['This request key was already used.']]);
+        }
+        return $existing;
     }
 
     private static function doCollect(array $d, User $by): Payment
@@ -56,7 +68,7 @@ class PaymentService
         $loan = LoanAccount::whereKey($d['loan_account_id'])->lockForUpdate()->firstOrFail();
         $key = $d['idempotency_key'] ?? null;
         if ($key && ($dupe = Payment::where('idempotency_key', $key)->first())) {
-            return $dupe; // lost the race – return the winner
+            return self::sameRequest($dupe, $d, $by); // lost the race – return the winner
         }
         if ($loan->status !== 'active') {
             throw ValidationException::withMessages(['loan_account_id' => ['This khata is closed.']]);
@@ -70,6 +82,9 @@ class PaymentService
         $date = $d['payment_date'] ?? now()->toDateString();
         if ($date > now()->toDateString()) {
             throw ValidationException::withMessages(['payment_date' => ['Payment date cannot be in the future.']]);
+        }
+        if (!$by->isAdmin() && $date < now()->subDays(self::BACKDATE_DAYS)->toDateString()) {
+            throw ValidationException::withMessages(['payment_date' => ['Payment date is too far in the past – ask an admin.']]);
         }
 
         $total = Money::p($d['amount']);

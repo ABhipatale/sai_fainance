@@ -56,7 +56,7 @@ class UserController extends ApiController
             'name' => 'required|string|max:150',
             'mobile' => 'nullable|digits:10',
             'username' => ['required', 'alpha_dash', 'min:3', 'max:60', Rule::unique('users', 'username')->ignore($existing?->id)],
-            'password' => [$existing ? 'nullable' : 'required', 'string', 'min:8'],
+            'password' => [$existing ? 'nullable' : 'required', 'string', AuthController::passwordRule()],
             'role' => 'required|in:admin,manager,recovery',
             'assigned_area' => 'nullable|string|max:120',
             'manager_id' => 'nullable|exists:users,id',
@@ -74,6 +74,7 @@ class UserController extends ApiController
         if ($by->isManager()) {
             $d['manager_id'] = $by->id;                       // managers create staff only under themselves
         }
+        $this->checkCashLocation($d['role'], $d['cash_location_id'] ?? null);
         $user = DB::transaction(function () use ($d, $r) {
             $u = User::create(collect($d)->except('photo')->all() + ['photo_path' => Media::store($r->file('photo'), 'photos')]);
             if ($u->cash_location_id) {
@@ -93,6 +94,14 @@ class UserController extends ApiController
         $d = $r->validate($this->rules($user));
         abort_if($d['role'] !== $user->role && !$by->isAdmin(), 403);
         abort_if($user->id === $by->id && ($d['status'] ?? 'active') !== 'active', 422, 'You cannot deactivate your own account.');
+        if ($by->isManager()) {
+            $d['manager_id'] = $by->id;                       // a manager cannot hand staff to someone else
+        }
+        if ($user->isAdmin() && ($d['role'] !== 'admin' || ($d['status'] ?? 'active') !== 'active')
+            && !User::where('role', 'admin')->where('status', 'active')->whereKeyNot($user->id)->exists()) {
+            abort(422, 'At least one active admin must remain.');
+        }
+        $this->checkCashLocation($d['role'], $d['cash_location_id'] ?? null);
 
         $old = $user->only(['name', 'role', 'status', 'assigned_area', 'cash_location_id']);
         $user->fill(collect($d)->except(['photo', 'password'])->all());
@@ -107,6 +116,14 @@ class UserController extends ApiController
         $user->save();
         Audit::log('user.updated', $user, $old, $user->only(array_keys($old)));
         return $this->ok(Present::user($user), 'User updated');
+    }
+
+    /** A recovery person's own cash location must be a recovery-cash location – never the office or a bank account. */
+    private function checkCashLocation(string $role, mixed $locationId): void
+    {
+        if ($role === 'recovery' && $locationId && CashLocation::whereKey($locationId)->value('type') !== 'recovery_cash') {
+            throw \Illuminate\Validation\ValidationException::withMessages(['cash_location_id' => ['Recovery staff can only hold a recovery-cash location.']]);
+        }
     }
 
     /** Assign customers to a recovery person (bulk). */

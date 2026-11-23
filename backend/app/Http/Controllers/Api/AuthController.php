@@ -8,6 +8,7 @@ use App\Support\Audit;
 use App\Support\Present;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Validation\Rules\Password;
 use Illuminate\Validation\ValidationException;
 
 class AuthController extends ApiController
@@ -17,7 +18,9 @@ class AuthController extends ApiController
         $d = $r->validate(['username' => 'required|string', 'password' => 'required|string']);
 
         $user = User::where('username', $d['username'])->orWhere('mobile', $d['username'])->first();
-        if (!$user || !Hash::check($d['password'], $user->password)) {
+        // always run one hash check so the response time does not reveal whether the username exists
+        $ok = Hash::check($d['password'], $user?->password ?? self::dummyHash());
+        if (!$user || !$ok) {
             Audit::log('auth.login_failed', null, null, ['username' => $d['username']]);
             throw ValidationException::withMessages(['username' => ['Invalid username or password.']]);
         }
@@ -30,6 +33,18 @@ class AuthController extends ApiController
         Audit::log('auth.login', $user, null, null, $user->id);
 
         return $this->ok($this->payload($user) + ['token' => $token], 'Logged in');
+    }
+
+    private static function dummyHash(): string
+    {
+        static $h = null;
+        return $h ??= Hash::make('timing-equaliser-' . config('app.key'));
+    }
+
+    /** Password rule for every new password: 8+ characters with letters and numbers. */
+    public static function passwordRule(): Password
+    {
+        return Password::min(8)->letters()->numbers();
     }
 
     public function logout(Request $r)
@@ -48,7 +63,7 @@ class AuthController extends ApiController
     {
         $d = $r->validate([
             'current_password' => 'required|string',
-            'password' => 'required|string|min:8|confirmed',
+            'password' => ['required', 'string', 'confirmed', 'different:current_password', self::passwordRule()],
         ]);
         $u = $r->user();
         if (!Hash::check($d['current_password'], $u->password)) {

@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Middleware\CheckPermission;
+use App\Http\Middleware\SecurityHeaders;
 use Illuminate\Auth\AuthenticationException;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Foundation\Application;
@@ -19,6 +20,7 @@ return Application::configure(basePath: dirname(__DIR__))
     )
     ->withMiddleware(function (Middleware $middleware): void {
         $middleware->alias(['permission' => CheckPermission::class]);
+        $middleware->append(SecurityHeaders::class);
         $middleware->trustProxies(at: '*'); // Hostinger sits behind a proxy – keep https/IP detection correct
     })
     ->withExceptions(function (Exceptions $exceptions): void {
